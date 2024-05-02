@@ -96,12 +96,33 @@ int main(int argc, char** argv) {
     int max_value = 0;
     if ( argc >= 2){
         std::string arg1_value{argv[1]};
+        std::string arg2_value{argv[2]};
+        std::string arg3_value = argv[3];
         if (arg1_value == "-max"){
-            if (argc < 3) {
+            if (argc < 3 || arg2_value == "-level" || arg3_value == "-level") {
                 std::cout << "Wrong usage! The argument '-max' requires some value!" << std::endl;
                 return -1;
             }
             max_value = std::stoi(argv[2]);
+        }
+        else if (arg1_value == "-level"){
+            if (argc < 3 || arg2_value == "-max" || arg3_value == "-max") {
+                std::cout << "Wrong usage! The argument '-level' requires some value!" << std::endl;
+                return -1;
+            }
+            int case_value = std::stoi(argv[2]);
+            switch (case_value)
+            {
+                case 1:
+                    max_value = 10;
+                    break;
+                case 2:
+                    max_value = 50;
+                    break;
+                default:
+                    max_value = 100;
+                    break;
+            }
         }
         else if (arg1_value == "-table") {
             high_scores();
