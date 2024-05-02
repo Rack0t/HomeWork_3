@@ -2,19 +2,7 @@
 #include <ctime>
 #include <fstream>
 #include <string>
-/*
-void print_hints(const int &number, const int &required_number){
-    if (number < required_number) {
-        std::cout << "less than " << number << std::endl;
-    }
-    else if (number > required_number) {
-        std::cout << "greater than " << number << std::endl;
-    }
-    else {
-        std::cout << "you win!" << std::endl;
-    }
-}
-*/
+#include <map>
 
 void write_scores(const std::string &user_name, const int &attempts_count){
     const std::string high_scores_filename = "high_scores.txt";
@@ -31,36 +19,9 @@ void write_scores(const std::string &user_name, const int &attempts_count){
         out_file << attempts_count;
         out_file << std::endl;
     }
-
-/*    {
-        std::ifstream in_file{high_scores_filename};
-        if (!in_file.is_open()) {
-            std::cout << "Failed to open file for read: " << high_scores_filename << "!" << std::endl;
-            return;
-        }
-
-        std::cout << "High scores table:" << std::endl;
-
-        std::string username;
-        int high_score = 0;
-        while (true) {
-            // Read the username first
-            in_file >> username;
-            // Read the high score next
-            in_file >> high_score;
-            // Ignore the end of line symbol
-            in_file.ignore();
-
-            if (in_file.fail()) {
-                break;
-            }
-
-            // Print the information to the screen
-            std::cout << username << '\t' << high_score << std::endl;
-        }
-    } */
 }
 
+/*
 void high_scores(){
     const std::string high_scores_filename = "high_scores.txt";
 
@@ -90,23 +51,56 @@ void high_scores(){
         std::cout << username << '\t' << high_score << std::endl;
     }
 }
+*/
+
+void high_score_table(){
+    std::ifstream in_file("high_scores.txt"); // Имя вашего текстового файла
+    if (!in_file.is_open()) {
+        std::cerr << "Failed to open the file." << std::endl;
+        return;
+    }
+
+    std::map<std::string, int> nameScores;
+    std::string line;
+
+    std::string username;
+    int high_score = 0;
+    while (true) {
+        // Read the username first
+        in_file >> username;
+        // Read the high score next
+        in_file >> high_score;
+        // Ignore the end of line symbol
+        in_file.ignore();
+        if (nameScores.find(username) == nameScores.end() || high_score < nameScores[username]) {
+            nameScores[username] = high_score;
+        }
+        if (in_file.fail()) {
+            break;
+        }
+    }
+    std::cout << "High scores table:" << std::endl;
+    for (const auto& pair : nameScores) {
+        std::cout << pair.first << " " << pair.second << std::endl;
+    }
+    std::cout << std::endl;
+}
 
 int main(int argc, char** argv) {
 
     int max_value = 0;
     if ( argc >= 2){
         std::string arg1_value{argv[1]};
-        std::string arg2_value{argv[2]};
-        std::string arg3_value = argv[3];
+
         if (arg1_value == "-max"){
-            if (argc < 3 || arg2_value == "-level" || arg3_value == "-level") {
+            if (argc < 3) {
                 std::cout << "Wrong usage! The argument '-max' requires some value!" << std::endl;
                 return -1;
             }
             max_value = std::stoi(argv[2]);
         }
         else if (arg1_value == "-level"){
-            if (argc < 3 || arg2_value == "-max" || arg3_value == "-max") {
+            if (argc < 3) {
                 std::cout << "Wrong usage! The argument '-level' requires some value!" << std::endl;
                 return -1;
             }
@@ -125,7 +119,8 @@ int main(int argc, char** argv) {
             }
         }
         else if (arg1_value == "-table") {
-            high_scores();
+//            high_scores();
+            high_score_table();
             return 0;
         }
     }
@@ -163,7 +158,8 @@ int main(int argc, char** argv) {
     } while(true);
 
     write_scores(user_name, attempts_count);
-    high_scores();
+//    high_scores();
+    high_score_table();
 
     return 0;
 }
